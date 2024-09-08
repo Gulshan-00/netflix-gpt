@@ -1,3 +1,17 @@
+
+# This is Netflix GPT
+- create react app
+- configured the Tailwind
+- Routing of an app 
+- Login form
+- sign up form
+- From validations
+- useRef Hook
+- firebase setup
+- deployed on the firebase 
+
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
