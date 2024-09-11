@@ -9,6 +9,8 @@
 - useRef Hook
 - firebase setup
 - deployed on the firebase 
+- create signup and signin 
+- now redux store is created
 
 
 

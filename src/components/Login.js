@@ -2,21 +2,89 @@ import React, { useState } from 'react'
 import Header from './Header'
 import { useRef } from 'react';
 import { checkValidateData } from '../utils/validate';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from '../utils/firebase';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { addUser } from '../utils/userSlice';
 
 const Login = () => {
+  const navigate=useNavigate();
+  const dispatch= useDispatch();
     
     //states
     const [isSignInForm, setIsSignInForm]=useState(true); //for form toggle
-    const [errorMessage, setErrorMessage]=useState(null);
+    const [errorMessage, setErrorMessage]=useState(null); //to print on the signin and signup page 
 
+    const name=useRef(null);
     const email =useRef(null);
     const password =useRef(null);
 
     const handleButtonClick=()=>{
         console.log(email.current.value)
         console.log(password.current.value)
-      const result=checkValidateData(email.current.value,password.current.value)
-      setErrorMessage(result)
+      const message=checkValidateData(email.current.value,password.current.value)
+      setErrorMessage(message);
+       
+      if(message) return;
+      //signin and signup logic
+      if(!isSignInForm){
+          //code for the sign up
+      createUserWithEmailAndPassword(auth, email.current.value,password.current.value)
+      .then((userCredential)=>{
+        //signin
+        const user=userCredential.user;
+        updateProfile(user, {
+          displayName: name.current.value, photoURL: "https://avatars.githubusercontent.com/u/90376979?v=4"
+        }).then(() => {
+             
+          const {uid,email, displayName, photoURL} = auth.currentUser;
+              dispatch(addUser({uid:uid,email:email, displayName:displayName, photoURL:photoURL}))
+
+          navigate("/browse");
+        }).catch((error) => {
+          setErrorMessage(error.message)
+        });
+        console.log(user)
+       
+        
+
+
+      })
+      .catch((error)=>{
+        const errorCode=error.code;
+        const errorMessage=error.message;
+        setErrorMessage(errorCode+"-"+errorMessage)
+
+      })
+      }else{
+        //code for the sign in 
+        
+        
+        signInWithEmailAndPassword(auth, email.current.value,password.current.value)
+          .then((userCredential) => {
+            // Signed in 
+            const user = userCredential.user;
+                        
+            console.log(user)
+            navigate("/browse");
+           
+          })
+          .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            // setErrorMessage(errorCode+"-"+errorMessage)
+            if(errorCode || errorMessage) 
+            {
+              setErrorMessage("User not Found")
+            }
+          });
+ 
+
+
+      }
+
     };
 
 const toggleSignInForm=()=>{
@@ -32,7 +100,7 @@ const toggleSignInForm=()=>{
         <form onSubmit={(e)=>e.preventDefault()} className='relative top-[100px] w-4/12 m-auto bg-black bg-opacity-70 rounded-md'>
             <div className='text-white flex justify-center items-center flex-col p-9 pb-[180px]'>
             <h1 className='text-4xl pb-4 mr-[180px] font-extrabold'>{isSignInForm?"Sign In":"Sign Up"}</h1>
-            {!isSignInForm && <input className='border border-gray-600 bg-transparent px-[50px] m-3 p-3 rounded-md' type="text" name="name" id="name" placeholder='Full name'/>}
+            {!isSignInForm && <input ref={name} className='border border-gray-600 bg-transparent px-[50px] m-3 p-3 rounded-md' type="text" name="name" id="name" placeholder='Full name'/>}
             
             <input ref={email} className='border border-gray-600 bg-transparent px-[50px] m-3 p-3 rounded-md' type="text" name="email" id="Email" placeholder='Email or phone number'/>
             <input ref={password} className='border border-gray-600 bg-transparent px-[50px] m-3 p-3 rounded-md' type="password" name="password" id="Password" placeholder='Password' />
