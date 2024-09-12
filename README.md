@@ -1,4 +1,4 @@
-
+Search your movie - the way you search in chatgpt
 # This is Netflix GPT
 - create react app
 - configured the Tailwind
