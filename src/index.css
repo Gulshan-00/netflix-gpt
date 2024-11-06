@@ -12,3 +12,48 @@
 /* font-style: normal; */
   
 }
+
+@keyframes scrollAnimation {
+  from{
+  transform: translateX(-500px);
+  opacity: 0;
+  
+  }
+  to{
+    transform: translateX(0px);
+    opacity: 1;
+  }
+  
+}
+
+@keyframes rightScrollAnimation {
+  from{
+  transform: translateX(500px);
+  opacity: 0;
+  
+  
+  }
+  to{
+    transform: translateX(0px);
+    opacity: 1;
+  }
+  
+}
+
+.header{
+  animation: scrollAnimation .8s ease-in;
+  
+  background-color: green;
+animation-timeline: view();
+animation-range:entry 0% cover 30%;
+border-radius: 50%;
+}
+
+.header1{
+  animation: rightScrollAnimation 2s ease-in-out;
+  background-color: rgb(253, 6, 6);
+animation-timeline: view();
+animation-range:entry 0% cover 30%;
+border-radius: 50%;
+
+}
